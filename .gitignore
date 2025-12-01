@@ -1,0 +1,41 @@
+# git 忽略文件 — Node / Webpack 项目
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnp.*
+.pnpm-store/
+
+# 构建输出
+dist/
+build/
+lib/
+*.tgz
+
+# 缓存 / 覆盖率 / 测试结果
+.cache/
+.cache-loader/
+.nyc_output/
+coverage/
+jest.test-results.json
+
+# 环境变量
+.env
+.env.*.local
+
+# 日志
+*.log
+debug.log
+
+# IDE / 操作系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# 锁文件（可选：如果你希望提交锁文件，可删除这些行）
+package-lock.json
+yarn.lock

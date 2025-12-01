@@ -1,0 +1,35 @@
+# NPM 忽略文件 — 根据项目发布需要调整
+node_modules/
+bower_components/
+.git/
+.gitignore
+.github/
+.vscode/
+.idea/
+.DS_Store
+
+# 日志与临时文件
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+tmp/
+temp/
+
+# 本地环境与覆盖率
+.env
+.env.local
+.env.*.local
+coverage/
+.nyc_output/
+
+# 测试与构建缓存
+test/
+tests/
+__tests__/
+*.tsbuildinfo
+
+# 秘钥、打包产物或本地包
+*.pem
+*.key
+*.tgz
