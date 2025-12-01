@@ -38,7 +38,7 @@ program
               name: 'projectName',
               message: 'Project name:',
               default: projectName || 'my-app',
-              validate: input => input.trim() !== '',
+              validate: (input) => input.trim() !== '',
             },
             {
               type: 'list',
@@ -101,7 +101,7 @@ program
 
       fs.writeFileSync(
         path.join(projectPath, 'package.json'),
-        JSON.stringify(packageJson, null, 2)
+        JSON.stringify(packageJson, null, 2),
       );
 
       spinner.succeed(`Project ${chalk.green(finalProjectName)} created successfully!`);
@@ -135,7 +135,7 @@ program
   .option('-c, --config <path>', 'webpack config path')
   .option('-a, --analyze', 'analyze bundle size')
   .option('-p, --profile', 'profile build performance')
-  .action(options => {
+  .action((options) => {
     const spinner = ora('Building project...').start();
 
     const args = ['webpack', '--mode=production'];
@@ -154,7 +154,7 @@ program
 
     const child = spawn('npx', args, { stdio: 'inherit' });
 
-    child.on('close', code => {
+    child.on('close', (code) => {
       if (code === 0) {
         spinner.succeed('Build completed successfully!');
       } else {
@@ -171,7 +171,7 @@ program
   .option('-p, --port <port>', 'server port', '3000')
   .option('-h, --host <host>', 'server host', 'localhost')
   .option('-o, --open', 'open browser automatically')
-  .action(options => {
+  .action((options) => {
     const spinner = ora('Starting development server...').start();
 
     const args = ['webpack', 'serve', '--mode=development'];
@@ -194,7 +194,7 @@ program
       spinner.succeed('Development server started!');
     });
 
-    child.on('error', err => {
+    child.on('error', (err) => {
       spinner.fail(`Failed to start server: ${err.message}`);
     });
   });
@@ -205,7 +205,7 @@ program
   .description('Generate webpack configuration')
   .option('-o, --output <path>', 'output path', 'webpack.config.js')
   .option('-p, --preset <preset>', 'config preset (react, vue, library)')
-  .action(options => {
+  .action((options) => {
     const builder = new WebpackConfigBuilder({
       framework: options.preset || 'react',
       typescript: true,
@@ -288,7 +288,7 @@ function generatePackageJson(projectName, options) {
       build: 'wcb build',
       'build:analyze': 'wcb build --analyze',
       lint: 'eslint src --ext .js,.jsx,.ts,.tsx',
-      format: 'prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,less}\"',
+      format: 'prettier --write "src/**/*.{js,jsx,ts,tsx,css,scss,less}"',
     },
     dependencies: dependencies,
     devDependencies: devDependencies,
@@ -306,7 +306,7 @@ function installDependencies(projectPath) {
       stdio: 'inherit',
     });
 
-    child.on('close', code => {
+    child.on('close', (code) => {
       if (code === 0) {
         resolve();
       } else {
