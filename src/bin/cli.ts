@@ -87,6 +87,7 @@ program
       // 复制模板
       const templateName = options.template || (answers as any).template || 'basic';
       await copyTemplate(templateName, projectPath, {
+        projectName: finalProjectName,
         typescript: (answers as any).typescript,
         cssPreprocessor: (answers as any).cssPreprocessor,
       });
@@ -214,7 +215,7 @@ program
 async function copyTemplate(
   templateName: string,
   targetPath: string,
-  options: { typescript?: boolean; cssPreprocessor?: string },
+  options: { projectName?: string; typescript?: boolean; cssPreprocessor?: string },
 ): Promise<void> {
   // 在运行时，__dirname指向编译后的lib/bin目录
   // 需要向上两级到达项目根目录，然后进入templates
