@@ -41,11 +41,20 @@ const defaultConfig: Configuration = {
  * 定义配置函数：返回合并后的默认配置，支持传入覆盖项
  *
  * 使用示例：
- * const config = definCongfig({ mode: 'production', output: { filename: 'app.js' } });
+ * const config = defineConfig({ mode: 'production', output: { filename: 'app.js' } });
  */
-export function definCongfig(overrides?: DeepPartial<Configuration>): Configuration {
+export function defineConfig(overrides?: DeepPartial<Configuration>): Configuration {
   // 使用 webpack-merge 的 merge 来合并配置
   // 把 overrides 当作部分配置传入，merge 会返回一个完整的 Configuration
   if (!overrides) return defaultConfig;
   return merge(defaultConfig, overrides as Configuration);
 }
+
+// 导出webpack配置
+export { default as webpackCommon } from './configs/webpack.common';
+export { default as webpackDev } from './configs/webpack.dev';
+export { default as webpackProd } from './configs/webpack.prod';
+export { default as webpackAnalyze } from './configs/webpack.analyze';
+
+// 导出工具函数
+export { default as paths } from './utils/paths';

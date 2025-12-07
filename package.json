@@ -25,12 +25,11 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "bin": {
-    "webpack-config-builder": "./lib/bin/wcb.js"
+    "wcb": "./lib/bin/cli.js",
+    "webpack-config-builder": "./lib/bin/cli.js"
   },
   "files": [
-    "bin",
     "lib",
-    "configs",
     "templates",
     "README.md",
     "CHANGELOG.md",

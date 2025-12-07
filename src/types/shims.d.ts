@@ -125,3 +125,26 @@ declare module 'webpack-merge' {
   const _default: typeof merge;
   export default _default;
 }
+
+declare module 'inquirer' {
+  interface Question {
+    type?: string;
+    name?: string;
+    message?: string;
+    default?: any;
+    choices?: any[];
+    validate?: (input: any) => boolean | string;
+  }
+
+  interface Answers {
+    [key: string]: any;
+  }
+
+  export function prompt<T extends Answers = Answers>(
+    questions: Question[],
+  ): Promise<T>;
+
+  export default {
+    prompt,
+  };
+}

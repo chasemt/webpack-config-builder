@@ -1,14 +1,13 @@
 #!/usr/bin/env node
 
-const { program } = require('commander');
-const figlet = require('figlet');
-const chalk = require('chalk');
-const inquirer = require('inquirer');
-const ora = require('ora');
-const fs = require('fs');
-const path = require('path');
-const { spawn } = require('child_process');
-const { WebpackConfigBuilder } = require('../lib');
+import { program } from 'commander';
+import figlet from 'figlet';
+import chalk from 'chalk';
+import * as inquirer from 'inquirer';
+import ora from 'ora';
+import fs from 'fs';
+import path from 'path';
+import { spawn } from 'child_process';
 
 // 显示欢迎信息
 console.log(chalk.cyan(figlet.textSync('WCB', { horizontalLayout: 'full' })));
@@ -25,7 +24,7 @@ program
   .option('-ts, --typescript', 'use TypeScript')
   .option('-c, --css <preprocessor>', 'CSS preprocessor (css, scss, less)')
   .option('-y, --yes', 'use default options')
-  .action(async (projectName, options) => {
+  .action(async (projectName: string, options: any) => {
     const spinner = ora('Initializing project...').start();
 
     try {
@@ -38,7 +37,7 @@ program
               name: 'projectName',
               message: 'Project name:',
               default: projectName || 'my-app',
-              validate: (input) => input.trim() !== '',
+              validate: (input: string) => input.trim() !== '',
             },
             {
               type: 'list',
@@ -73,7 +72,7 @@ program
             },
           ]);
 
-      const finalProjectName = answers.projectName || projectName || 'my-app';
+      const finalProjectName = (answers as any).projectName || projectName || 'my-app';
       const projectPath = path.resolve(process.cwd(), finalProjectName);
 
       // 检查目录是否存在
@@ -86,17 +85,17 @@ program
       fs.mkdirSync(projectPath, { recursive: true });
 
       // 复制模板
-      const templateName = options.template || answers.template || 'basic';
+      const templateName = options.template || (answers as any).template || 'basic';
       await copyTemplate(templateName, projectPath, {
-        typescript: answers.typescript,
-        cssPreprocessor: answers.cssPreprocessor,
+        typescript: (answers as any).typescript,
+        cssPreprocessor: (answers as any).cssPreprocessor,
       });
 
       // 生成package.json
       const packageJson = generatePackageJson(finalProjectName, {
         template: templateName,
-        typescript: answers.typescript,
-        cssPreprocessor: answers.cssPreprocessor,
+        typescript: (answers as any).typescript,
+        cssPreprocessor: (answers as any).cssPreprocessor,
       });
 
       fs.writeFileSync(
@@ -107,7 +106,7 @@ program
       spinner.succeed(`Project ${chalk.green(finalProjectName)} created successfully!`);
 
       // 安装依赖
-      if (answers.installDeps) {
+      if ((answers as any).installDeps) {
         spinner.start('Installing dependencies...');
         await installDependencies(projectPath);
         spinner.succeed('Dependencies installed successfully!');
@@ -116,13 +115,13 @@ program
       // 显示下一步提示
       console.log('\nNext steps:');
       console.log(chalk.cyan(`  cd ${finalProjectName}`));
-      if (!answers.installDeps) {
+      if (!(answers as any).installDeps) {
         console.log(chalk.cyan('  npm install'));
       }
       console.log(chalk.cyan('  npm run dev\n'));
 
       console.log('Happy coding! 🎉');
-    } catch (error) {
+    } catch (error: any) {
       spinner.fail(`Failed to initialize project: ${error.message}`);
       process.exit(1);
     }
@@ -135,7 +134,7 @@ program
   .option('-c, --config <path>', 'webpack config path')
   .option('-a, --analyze', 'analyze bundle size')
   .option('-p, --profile', 'profile build performance')
-  .action((options) => {
+  .action((options: any) => {
     const spinner = ora('Building project...').start();
 
     const args = ['webpack', '--mode=production'];
@@ -159,7 +158,7 @@ program
         spinner.succeed('Build completed successfully!');
       } else {
         spinner.fail('Build failed!');
-        process.exit(code);
+        process.exit(code || 1);
       }
     });
   });
@@ -171,7 +170,7 @@ program
   .option('-p, --port <port>', 'server port', '3000')
   .option('-h, --host <host>', 'server host', 'localhost')
   .option('-o, --open', 'open browser automatically')
-  .action((options) => {
+  .action((options: any) => {
     const spinner = ora('Starting development server...').start();
 
     const args = ['webpack', 'serve', '--mode=development'];
@@ -205,29 +204,28 @@ program
   .description('Generate webpack configuration')
   .option('-o, --output <path>', 'output path', 'webpack.config.js')
   .option('-p, --preset <preset>', 'config preset (react, vue, library)')
-  .action((options) => {
-    const builder = new WebpackConfigBuilder({
-      framework: options.preset || 'react',
-      typescript: true,
-    });
-
-    const config = builder.create();
-    const configStr = `module.exports = ${JSON.stringify(config, null, 2)}`;
-
-    fs.writeFileSync(options.output, configStr);
-    console.log(chalk.green(`Configuration generated at ${options.output}`));
+  .action((options: any) => {
+    // TODO: 实现WebpackConfigBuilder类
+    console.log(chalk.yellow('Config command is not yet implemented'));
+    console.log(chalk.green(`Would generate configuration at ${options.output}`));
   });
 
 // 工具函数
-async function copyTemplate(templateName, targetPath, options) {
-  const templatePath = path.join(__dirname, '../templates', templateName);
+async function copyTemplate(
+  templateName: string,
+  targetPath: string,
+  options: { typescript?: boolean; cssPreprocessor?: string },
+): Promise<void> {
+  // 在运行时，__dirname指向编译后的lib/bin目录
+  // 需要向上两级到达项目根目录，然后进入templates
+  const templatePath = path.join(__dirname, '../../../templates', templateName);
 
   if (!fs.existsSync(templatePath)) {
     throw new Error(`Template ${templateName} not found`);
   }
 
   // 递归复制文件
-  function copyDir(src, dest) {
+  function copyDir(src: string, dest: string): void {
     fs.mkdirSync(dest, { recursive: true });
 
     for (const item of fs.readdirSync(src)) {
@@ -244,7 +242,7 @@ async function copyTemplate(templateName, targetPath, options) {
 
           // 替换变量
           content = content.replace(/\{\{(\w+)\}\}/g, (match, key) => {
-            return options[key] || match;
+            return (options as any)[key] || match;
           });
 
           fs.writeFileSync(finalDest, content);
@@ -258,14 +256,17 @@ async function copyTemplate(templateName, targetPath, options) {
   copyDir(templatePath, targetPath);
 }
 
-function generatePackageJson(projectName, options) {
-  const dependencies = {
+function generatePackageJson(
+  projectName: string,
+  options: { template?: string; typescript?: boolean; cssPreprocessor?: string },
+): any {
+  const dependencies: Record<string, string> = {
     react: '^18.2.0',
     'react-dom': '^18.2.0',
     'webpack-config-builder': '^1.0.0',
   };
 
-  const devDependencies = {
+  const devDependencies: Record<string, string> = {
     '@types/react': '^18.2.37',
     '@types/react-dom': '^18.2.15',
     typescript: '^5.3.2',
@@ -299,7 +300,7 @@ function generatePackageJson(projectName, options) {
   };
 }
 
-function installDependencies(projectPath) {
+function installDependencies(projectPath: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const child = spawn('npm', ['install'], {
       cwd: projectPath,
@@ -318,3 +319,4 @@ function installDependencies(projectPath) {
 
 // 解析命令
 program.parse();
+

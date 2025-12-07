@@ -1,1 +1,1 @@
-{"root":["./src/index.ts"],"version":"5.9.3"}
+{"root":["./src/index.ts","./src/bin/cli.ts","./src/configs/webpack.analyze.ts","./src/configs/webpack.common.ts","./src/configs/webpack.dev.ts","./src/configs/webpack.prod.ts","./src/types/shims.d.ts","./src/utils/paths.ts"],"version":"5.9.3"}
