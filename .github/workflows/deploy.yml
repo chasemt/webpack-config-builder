@@ -1,0 +1,55 @@
+# .github/workflows/deploy.yml
+name: Deploy to CDN
+
+on:
+  push:
+    branches: [main]  # 仅当main分支有提交时触发
+  workflow_dispatch:  # 手动触发选项
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build  # 根据项目调整为webpack或vite命令
+
+      # - name: Upload to CDN
+      #   run: |
+      #     # 安装CDN客户端工具（示例为阿里云OSS）
+      #     npm install -g ossutil
+      #     # 配置密钥（从GitHub Secrets获取）
+      #     ossutil config -e $OSS_ENDPOINT -i $OSS_ACCESS_KEY_ID -k $OSS_ACCESS_KEY_SECRET
+      #     # 上传dist目录到CDN
+      #     ossutil cp -r dist/ oss://your-bucket-name/ --update
+      #   env:
+      #     OSS_ENDPOINT: ${{ secrets.OSS_ENDPOINT }}
+      #     OSS_ACCESS_KEY_ID: ${{ secrets.OSS_ACCESS_KEY_ID }}
+      #     OSS_ACCESS_KEY_SECRET: ${{ secrets.OSS_ACCESS_KEY_SECRET }}
+
+      # - name: Cleanup old files
+      #   run: |
+      #     # 删除CDN上超过7天的文件（示例为AWS S3）
+      #     aws s3 rm s3://your-bucket-name/ --recursive --exclude "*" --include "*.js" --include "*.css" --exclude "*.html" --exclude "*.ico" --exclude "*.txt" --older-than 7
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      # - name: Send notification
+      #   uses: 8398a7/action-slack@v4
+      #   if: always()
+      #   with:
+      #     status: ${{ job.status }}
+      #     fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+      #   env:
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
