@@ -26,7 +26,7 @@ const dev = (env: Record<string, any> = {}): Configuration => {
         },
         progress: true,
       },
-      proxy: env.proxy || {},
+      proxy: env.proxy ? (Array.isArray(env.proxy) ? env.proxy : [env.proxy]) : [],
     },
 
     optimization: {
